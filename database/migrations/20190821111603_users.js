@@ -2,14 +2,14 @@ exports.up = function(knex) {
   return knex.schema
     .createTable('departments', tbl => {
       tbl.increments();
-      tbl.string('department_name').notNullable();
-      tbl.string('department_info');
+      tbl.string('department_name', 255).notNullable();
+      tbl.string('department_info', 4000);
     })
 
     .createTable('positions', tbl => {
       tbl.increments();
-      tbl.string('position_name').notNullable();
-      tbl.string('position_description');
+      tbl.string('position_name', 255).notNullable();
+      tbl.string('position_description', 4000);
     })
 
     .createTable('users', tbl => {
