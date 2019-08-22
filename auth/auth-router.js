@@ -11,8 +11,8 @@ router.post('/register', (req, res) => {
   user.password = hash;
 
   Users.add(user)
-    .then(registeredUser => {
-      res.status(201).json(registeredUser);
+    .then(newUser => {
+      res.status(201).json(newUser);
     })
     .catch(err => {
       res.status(500).json(err);
@@ -56,6 +56,5 @@ router.get('/logout', (req, res) => {
     res.status(200).json({ message: 'he gone' });
   });
 });
-
 
 module.exports = router;
