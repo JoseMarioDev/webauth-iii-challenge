@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
-const secrets = require('../config/secrets');
+const jwt = require('jsonwebtoken');
 
 const Users = require('../users/users-model');
-const jwt = require('jsonwebtoken');
+const secrets = require('../config/secrets');
 
 router.post('/register', (req, res) => {
   let user = req.body;
@@ -11,8 +11,8 @@ router.post('/register', (req, res) => {
   user.password = hash;
 
   Users.add(user)
-    .then(regedUser => {
-      res.status(201).json(regedUser);
+    .then(registeredUser => {
+      res.status(201).json(registeredUser);
     })
     .catch(err => {
       res.status(500).json(err);
@@ -27,9 +27,10 @@ router.post('/login', (req, res) => {
     .then(user => {
       if (user && bcrypt.compareSync(password, user.password)) {
         const token = generateToken(user);
-        req.session.username = user.username;
-        req.session.loggedIn = true;
-        res.status(200).json(token);
+        res.status(200).json({
+          message: `Welcome ${user.username}!`,
+          token,
+        });
       } else {
         res.status(401).json({ message: 'invalid creds' });
       }
@@ -42,8 +43,7 @@ function generateToken(user) {
   const payload = {
     subject: user.id,
     username: user.username,
-    password: user.password,
-    department: user.department,
+    jwtid: 1,
   };
   const options = {
     expiresIn: '1d',
@@ -57,14 +57,5 @@ router.get('/logout', (req, res) => {
   });
 });
 
-router.get('/users', (req, res) => {
-  Users.find()
-    .then(users => {
-      res.json(users);
-    })
-    .catch(err => {
-      res.send(err);
-    });
-});
 
 module.exports = router;

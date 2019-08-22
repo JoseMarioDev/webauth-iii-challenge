@@ -8,7 +8,16 @@ module.exports = {
 };
 
 function find() {
-  return db('users').select('id', 'username', 'password', 'department');
+  return db('users as u')
+    .select(
+      'u.id',
+      'u.username',
+      'u.password',
+      'p.name as position_name',
+      'd.name as department_name',
+    )
+    .innerJoin('positions as p', 'p.id', '=', 'u.position_id')
+    .innerJoin('departments as d', 'd.id', '=', 'u.department_id');
 }
 
 function findBy(filter) {
